@@ -116,7 +116,7 @@ def app():
         response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
 
         # Display the response
-        st.write(f"AES Copilot: {response.json()["choices"][0]["message"]["content"]}")         
+        st.write(f"AES Copilot: {response["choices"][0]["message"]["content"]}")         
         #st.write(response.json())
 
         # update the progress bar
