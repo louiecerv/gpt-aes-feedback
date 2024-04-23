@@ -30,7 +30,7 @@ def app():
 
     # Display the title in the right column
     with col2:
-        st.title("Automated Essay Scoring System using Gemini on Google AI Studio")
+        st.title("Automated Essay Scoring System using GPT-4 Turbo AI Model")
 
     text = """Prof. Louie F. Cervantes, M. Eng. (Information Engineering) \n
     CCS 229 - Intelligent Systems
@@ -40,18 +40,17 @@ def app():
     """
     with st.expander("Click to display developer information."):
         st.text(text)
-        link_text = "Click here to visit [Gemini 1.5 Pro](https://developers.googleblog.com/2024/04/gemini-15-pro-in-public-preview-with-new-features.html)"
-        st.write(link_text)
-        link_text = "Click here to visit [Gemini Vertex AI](https://cloud.google.com/vertex-ai/docs/start/introduction-unified-platform)"
+        link_text = "Click here to visit [OpenAI](https://openai.com/)"
         st.write(link_text)
 
     st.subheader("From Tedious Grading to Personalized Feedback: Unleashing the Power of Automated Essay Scoring")
     text = """Traditionally, grading essays has been a time-consuming manual process for educators. 
-    Now, with the help of advanced technology like Gemini, we can transform essay scoring.
-    Gemini analyzes images of handwritten essays and generates both a score and individualized 
+    Now, with the help of advanced technology like GPT-4}, we can transform essay scoring.
+    The AI teaching copilot analyzes images of handwritten essays and generates both a score and individualized 
     feedback for improvement.
     This innovative approach saves educators valuable time while providing students with actionable 
     insights to enhance their writing skills."""
+    
     st.write(text)
 
     options = ['Sample 1', 'Sample 2', 'Sample 3', 'Sample 4', 'Sample 5', 'Sample 6', 'Sample 7']
