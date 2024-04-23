@@ -4,7 +4,7 @@ import PIL.Image
 import base64
 import requests
 import streamlit as st
-import
+import json
 
 # OpenAI API Key
 api_key = st.secrets["API_key"]
