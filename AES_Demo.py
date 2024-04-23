@@ -105,7 +105,7 @@ def app():
         ]
         }
     ],
-    "max_tokens": 300
+    "max_tokens": 2048,
     }    
 
     # Button to generate response
