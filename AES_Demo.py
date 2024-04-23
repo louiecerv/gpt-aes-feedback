@@ -4,6 +4,7 @@ import PIL.Image
 import base64
 import requests
 import streamlit as st
+import
 
 # OpenAI API Key
 api_key = st.secrets["API_key"]
@@ -116,7 +117,9 @@ def app():
         response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
 
         # Display the response
-        st.write(f"AES Copilot: {response["choices"][0]["message"]["content"]}")         
+        content = response.json()
+                
+        st.write(f"AES Copilot: {content['choices'][0]['message']['content']}")
         #st.write(response.json())
 
         # update the progress bar
