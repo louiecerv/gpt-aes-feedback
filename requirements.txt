@@ -1,2 +1,4 @@
-strealit
-openai
+streamlit
+google-cloud-aiplatform
+google-generativeai
+pillow
