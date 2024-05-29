@@ -112,7 +112,7 @@ def app():
         st.image(img, caption="Essay Response", use_column_width=True)
         progress_bar = st.progress(0, text="The AI teacher co-pilot is processing the request, please wait...")
        
-        # Generate response from emini
+        # Generate response
         response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
 
         # Display the response

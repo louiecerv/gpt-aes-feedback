@@ -1,20 +1,25 @@
-import base64
-import google.generativeai as genai
-import streamlit as st
 import os
 import time
 import PIL.Image
+import base64
+import requests
+import streamlit as st
+import json
+from PIL import Image  # Import Pillow library for JpegImageFile
 
-GOOGLE_API_KEY = st.secrets["API_key"]
-genai.configure(api_key=GOOGLE_API_KEY)
+# OpenAI API Key
+api_key = st.secrets["API_key"]
 
+# Function to encode the imaxerge
+def encode_image(image_data):
+    return base64.b64encode(image_data).decode('utf-8')
+
+headers = {
+    "Content-Type": "application/json",
+    "Authorization": f"Bearer {api_key}"
+}
 
 def app():
-
-    model = genai.GenerativeModel(
-        "gemini-pro-vision",
-    )
-
 
     # Create two columns
     col1, col2 = st.columns([1, 4])
@@ -25,7 +30,7 @@ def app():
 
     # Display the title in the right column
     with col2:
-        st.title("Automated Essay Scoring System using Gemini on Google AI Studio")
+        st.subheader("Automated Essay Scoring System using GPT-4 Model")
 
     text = """Prof. Louie F. Cervantes, M. Eng. (Information Engineering) \n
     CCS 229 - Intelligent Systems
@@ -35,49 +40,88 @@ def app():
     """
     with st.expander("Click to display developer information."):
         st.text(text)
-        link_text = "Click here to visit [Gemini 1.5 Pro](https://developers.googleblog.com/2024/04/gemini-15-pro-in-public-preview-with-new-features.html)"
+        link_text = "Click here to visit [OpenAI](https://openai.com/)"
         st.write(link_text)
-        link_text = "Click here to visit [Gemini Vertex AI](https://cloud.google.com/vertex-ai/docs/start/introduction-unified-platform)"
-        st.write(link_text)
+
+    st.subheader("From Tedious Grading to Personalized Feedback: Unleashing the Power of Automated Essay Scoring")
+    text = """Traditionally, grading essays has been a time-consuming manual process for educators. 
+    Now, with the help of advanced technology like GPT-4}, we can transform essay scoring.
+    The AI teaching copilot analyzes images of handwritten essays and generates both a score and individualized 
+    feedback for improvement.
+    This innovative approach saves educators valuable time while providing students with actionable 
+    insights to enhance their writing skills."""
     
-    st.subheader("Score Handwritten Essays Quickly and Easily")
-    text = """This app streamlines the process of scoring your students' handwritten essays. Here's how to get started:
-    \n1. Capture a Clear Photo: Ensure good lighting and hold your camera
-    steady to take a sharp photo of the handwritten essay.
-    \n2. Upload the Image: Select the photo you just captured from your 
-    device's gallery.
-    \n3. Provide Context: Enter the essay prompt or question that the 
-    students were responding to.
-    \n4. Upload or paste the scoring rubric you'll be using to evaluate 
-    the essays.
-    \nGet Instant Scores: Click "Score Essay" to receive an automated 
-    assessment based on your chosen rubric."""
     st.write(text)
 
     # Create a file uploader widget
     uploaded_file = st.sidebar.file_uploader("Choose an image", type=["jpg", "jpeg", "png"])
     if uploaded_file is not None:
         st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
-        image = PIL.Image.open(uploaded_file)
+        #image = PIL.Image.open(uploaded_file)
         question = st.text_area("Enter the essay question:")
-        scoring_rubric = st.text_area("Enter the scoring rubric:")
-    
+        rubric = """Introduction (20 points):
+                    Clearly states essay purpose (5 points)
+                    Strong thesis outlining pros and cons of AI writing (15 points) 
+                    Content (30 points):
+                    Discusses both advantages and disadvantages (15 points)
+                    Well-developed examples and supporting evidence (15 points)
+                    Analysis (25 points):
+                    Insightful analysis (10 points)
+                    Creativity, originality, and other relevant factors considered (15 points)
+                    Organization & Style (25 points):
+                    Clear logical flow and effective transitions (10 points)
+                    Proper paragraphing (5 points)
+                    Clear and concise language with appropriate tone (10 points)
+                    Conclusion (10 points):
+                    Reaffirms thesis and offers a balanced perspective (5 points)
+                    Considers future implications (5 points)"""
+        scoring_rubric = st.text_area("Enter the scoring rubric:", rubric)
+
         prompt = """You are a language teacher. The essay question is
         {question} Use the scoring rubric: {scoring_rubric} Score the essay 
         response found in this image out of a perfect score of 100. 
         Point out significant errors. Provide feedback and suggestions for improvement."""
 
+        image_data = uploaded_file.read()
+        base64_image = encode_image(image_data)
+    else:
+        st.error("Please upload an image file.")
+        return
+
+    payload = {
+    "model": "gpt-4-turbo",
+    "messages": [
+        {
+        "role": "user",
+        "content": [
+            {
+            "type": "text",
+            "text": prompt
+            },
+            {
+            "type": "image_url",
+            "image_url": {
+                "url": f"data:image/jpeg;base64,{base64_image}"
+            }
+            }
+        ]
+        }
+    ],
+    "max_tokens": 2048,
+    }    
+
     # Button to generate response
     if st.button("Score Essay"):
         progress_bar = st.progress(0, text="The AI teacher co-pilot is processing the request, please wait...")
        
-
         # Generate response from emini
-        bot_response = model.generate_content([prompt, image])
+        response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
 
-        # Access the content of the response text
-        bot_response = bot_response.text
-        st.write(f"Gemini: {bot_response}")
+        # Display the response
+        content = response.json()
+                
+        st.write(f"AES Copilot: {content['choices'][0]['message']['content']}")
+        #st.write(response.json())
 
         # update the progress bar
         for i in range(100):
