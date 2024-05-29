@@ -5,7 +5,7 @@ import os
 import time
 import PIL.Image
 
-GOOGLE_API_KEY=st.secrets["GOOGLE_API_KEY"]
+GOOGLE_API_KEY = st.secrets["API_key"]
 genai.configure(api_key=GOOGLE_API_KEY)
 
 
